@@ -21,8 +21,9 @@ Use --help/-h to view info on the arguments::
 
     $ pire --help
 
-Release Notes
--------------
+Releases
+--------
 
-:0.0.1:
-    Project created
+| Version | Notes           |
+| ------- | --------------- |
+|  0.0.1  | Project created |

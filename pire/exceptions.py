@@ -1,0 +1,2 @@
+class PireError(ValueError):
+    pass

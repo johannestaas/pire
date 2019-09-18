@@ -38,7 +38,7 @@ setup(
         'Operating System :: Microsoft :: Windows',
         'Programming Language :: Python',
     ],
-    install_requires=[],
+    install_requires=['ezcurses'],
     entry_points={
         'console_scripts': [
             'pire=pire:main',

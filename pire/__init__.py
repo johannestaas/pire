@@ -10,6 +10,8 @@ __author__ = 'Johan Nestaas <johannestaas@gmail.com'
 __license__ = 'GPLv3'
 __copyright__ = 'Copyright 2019 Johan Nestaas'
 
+from .preprocessor import _preprocess
+
 
 def main():
     import argparse
@@ -25,3 +27,11 @@ def main():
     )
     parser.add_argument('input_file')
     args = parser.parse_args()
+    if args.preprocess:
+        preprocess = _preprocess(args.preprocess)
+    else:
+        def preprocess(f):
+            yield from f
+    with open(args.input_file) as f:
+        for line in preprocess(f):
+            print('parsed line')

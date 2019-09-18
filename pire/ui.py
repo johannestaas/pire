@@ -15,7 +15,7 @@ def display(regexes, regex_win, out_win):
         color = 'red' if not regex.enabled else None
         regex_win.write(regex.regex_str, pos=(0, i), color=color)
     regex_win.refresh()
-    for i, out in enumerate(regexes[0].output):
+    for i, out in enumerate(regexes[2].output):
         msg, color = out.format()
         out_win.write(msg, pos=(0, i), color=color)
     out_win.refresh()

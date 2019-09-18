@@ -1,7 +1,7 @@
 from .exceptions import MissingPreprocessFunctionError
 
 
-def _preprocess(path):
+def load_preprocessor(path):
     preprocessor_globals = {}
     with open(path) as f:
         exec(f.read(), preprocessor_globals)

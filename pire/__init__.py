@@ -3,7 +3,6 @@ pire
 
 Python Interactive Regular Expressions
 '''
-
 __title__ = 'pire'
 __version__ = '0.0.1'
 __all__ = ()

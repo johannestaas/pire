@@ -30,9 +30,15 @@ def display(regexes, sel_regex, scr, regex_win, out_win, match_wins):
             out_win.write(out.line, color='yellow', pos=pos)
             continue
         out_win.write(out.line, color=None, pos=pos)
-        # groups = out.match.groupdict() or out.match.groups()
-        # if groups:
-        #     match_win.write(repr(groups), pos=(pos[0] + 1, pos[1]))
+        groups = out.match.groupdict() or out.match.groups()
+        if groups:
+            if isinstance(groups, dict):
+                keys = list(groups.keys())
+            else:
+                keys = range(len(groups))
+            for i, win in enumerate(match_wins):
+                key = keys[i]
+                win.write(groups[key], pos=(pos[0] + 1, pos[1]))
     for win in match_wins:
         win.refresh()
     out_win.refresh()

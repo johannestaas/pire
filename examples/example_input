@@ -1,0 +1,12 @@
+abc 123 fgh
+whatever
+z_z 999 _xx
+hello 12345 there
+something_here 091029394 anotherphrase
+# foo 123 bar
+# whatever
+# commented out
+zzz 333 xxx
+this is not going to match so it's yellow
+HELLO THERE im not a match either
+i_am 123 a_match_though

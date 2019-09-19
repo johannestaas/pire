@@ -1,0 +1,3 @@
+\w\w\w \d\d\d \w\w\w
+(\w\w\w) (\d\d\d) (\w\w\w)
+(?P<first_word>\w+) (?P<digits>\d+) (?P<second_word>\w+)

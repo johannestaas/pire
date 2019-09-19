@@ -23,17 +23,13 @@ class Regex:
 
     def __init__(self, regex_str):
         self.regex_str = regex_str
-        self.enabled = (not regex_str.startswith('#'))
-        if self.enabled:
-            self.regex = re.compile(regex_str)
-        else:
-            self.regex = re.compile(regex_str[1:])
+        self.regex = re.compile(regex_str)
+        self.num_groups = self.regex.groups
         self.output = []
 
     def match(self, line):
-        if self.enabled:
-            match = self.regex.match(line)
-            self.output.append(Match(line, match))
+        match = self.regex.match(line)
+        self.output.append(Match(line, match))
 
 
 def load_regexes(path):
@@ -47,8 +43,7 @@ def load_regexes(path):
     ]
 
 
-def run_regexes(regexes, line_gen):
+def run_regex(regex, line_gen):
     for line in line_gen:
         line = line.rstrip('\n')
-        for regex in regexes:
-            regex.match(line)
+        regex.match(line)

@@ -11,30 +11,20 @@ __license__ = 'GPLv3'
 __copyright__ = 'Copyright 2019 Johan Nestaas'
 
 from .ui import run_pire
-from .preprocessor import load_preprocessor
 
 
 def main():
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        '--preprocess', '-p',
-        help='',
+        '--regex', '-r', default='regex.pire',
+        help='path to text file with newline-delimited regular expressions',
     )
     parser.add_argument(
-        '--regex', '-r',
-        default='regex.pire',
-        help='',
+        'input_paths', nargs='+', help='paths to files to parse with regex',
     )
-    parser.add_argument('input_path')
     args = parser.parse_args()
-    if args.preprocess:
-        preprocess = load_preprocessor(args.preprocess)
-    else:
-        def preprocess(f):
-            yield from f
     run_pire(
-        preprocess=preprocess,
         regex_path=args.regex,
-        input_path=args.input_path,
+        input_paths=args.input_paths,
     )

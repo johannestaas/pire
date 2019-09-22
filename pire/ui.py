@@ -3,12 +3,16 @@ from ezcurses import Cursed
 from .regex_engine import load_regexes, run_regex
 
 
-def gen_lines(input_path, preprocess):
-    with open(input_path) as f:
-        yield from preprocess(f)
+def gen_lines(input_paths):
+    for path in input_paths:
+        with open(path) as f:
+            yield from f
 
 
 def display(regexes, sel_regex, scr, regex_win, out_win, match_wins):
+    """
+    Displays the input matched against the regexes in two windows.
+    """
     regex_win.clear()
     out_win.clear()
     for win in match_wins:
@@ -45,9 +49,8 @@ def display(regexes, sel_regex, scr, regex_win, out_win, match_wins):
 
 
 def run_pire(
-    preprocess=None,
     regex_path=None,
-    input_path=None,
+    input_paths=None,
     split_horiz=True,
 ):
     with Cursed() as scr:
@@ -67,7 +70,7 @@ def run_pire(
             rows = list(layout)
             regex_win = rows[0][0]
             out_win, *match_wins = rows[1]
-            line_gen = gen_lines(input_path, preprocess)
+            line_gen = gen_lines(input_paths)
             run_regex(sel_regex, line_gen)
             scr.clear()
             scr.refresh()

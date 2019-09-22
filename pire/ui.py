@@ -23,16 +23,7 @@ def display(regexes, sel_regex, scr, regex_win, out_win):
     out_win.write('=' * out_w, pos=(0, 0), color='blue')
     for i, out in enumerate(sel_regex.output):
         pos = (0, i + 1)
-        if out.match is None:
-            out_win.write(out.line, color='yellow', pos=pos)
-            continue
-        out_win.write(out.line, color=None, pos=pos)
-        groups = out.match.groupdict() or out.match.groups()
-        if groups:
-            if isinstance(groups, dict):
-                keys = list(groups.keys())
-            else:
-                keys = range(len(groups))
+        out.draw(out_win, pos)
     out_win.refresh()
 
 

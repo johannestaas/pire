@@ -1,4 +1,18 @@
 import re
+from collections import namedtuple
+
+
+def _color_gen():
+    colors = ('green', 'blue', 'magenta', 'cyan', 'white', 'red')
+    color_i = 0
+    while True:
+        yield colors[color_i]
+        color_i += 1
+        color_i %= len(colors)
+
+
+# Tracks where color text is inserted into lines for matched groups.
+_Insert = namedtuple('_Insert', ('text', 'color'))
 
 
 class Match:
@@ -9,47 +23,56 @@ class Match:
         self.names = names
 
     def draw(self, win, pos):
+        # Return yellow if not a match.
         if self.match is None:
-            # Return if not a match.
             win.write(self.line, color='yellow', pos=pos)
             return
+
+        # Return default color if no groups defined.
         if not self.match.groups():
-            # Return if no groups defined.
             win.write(self.line, color=None, pos=pos)
             return
-        names = sorted(self.names, key=lambda x: self.match.span(x))
-        start, _ = self.match.span(names[0])
-        x, y = pos
-        last = 0
 
-        def color():
-            colors = ('green', 'blue', 'magenta', 'cyan', 'white', 'red')
-            color_i = 0
-            while True:
-                yield colors[color_i]
-                color_i += 1
-                color_i %= len(colors)
+        # Now we have to show the groups.
+        self._draw_groups(win, pos)
 
-        color_gen = color()
-
+    def _draw_groups(self, win, pos):
+        # Sort by the match span, by start and longest ones.
+        def _inverse_span_sort(name):
+            span_start, span_end = self.match.span(name)
+            # If they're equal starts, then take the longest one as the first.
+            return (span_start, span_end * -1)
+        names = sorted(self.names, key=_inverse_span_sort)
+        inserts = []
+        color_gen = _color_gen()
         for i, name in enumerate(names):
+            color = next(color_gen)
             start, end = self.match.span(name)
-            group = self.match.group(name)
-            if start > last:
-                win.write(self.line[last:start], color=None, pos=(x, y))
-                x += start - last
             if isinstance(name, str):
                 text = f'(?P<{name}>'
             else:
                 text = f'([{name}]'
-            match_color = next(color_gen)
-            win.write(text, color=match_color, pos=(x, y))
-            x += len(text)
-            win.write(group, color=None, pos=(x, y))
-            x += len(group)
-            win.write(')', color=match_color, pos=(x, y))
-            x += 1
-            last = end
+            inserts.append((start, i, _Insert(text, color)))
+            inserts.append((end, -i, _Insert(')', color)))
+        # This sorts it so it's naturally sorted by the order they should be
+        # written in (i and -i make it so the later matches get written
+        # inside).
+        inserts = [
+            (i_pos, ins)
+            for i_pos, _, ins in sorted(inserts)
+        ]
+
+        x, y = pos
+        last = 0
+        for ipos, insert in inserts:
+            if ipos > last:
+                win.write(self.line[last:ipos], color=None, pos=(x, y))
+                x += ipos - last
+            win.write(insert.text, color=insert.color, pos=(x, y))
+            x += len(insert.text)
+            last = ipos
+        if self.line[last:]:
+            win.write(self.line[last:], color=None, pos=(x, y))
 
 
 class Regex:

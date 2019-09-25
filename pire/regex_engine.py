@@ -1,6 +1,8 @@
 import re
 from collections import namedtuple
 
+from .exceptions import PireError
+
 
 def _color_gen():
     colors = ('green', 'blue', 'magenta', 'cyan', 'red')
@@ -13,6 +15,18 @@ def _color_gen():
 
 # Tracks where color text is inserted into lines for matched groups.
 _Insert = namedtuple('_Insert', ('text', 'color'))
+
+
+def _after_i_func(after):
+    def func(i):
+        return after + i + 1
+    return func
+
+
+def _before_i_func(before):
+    def func(i):
+        return before - i - 1
+    return func
 
 
 class Match:
@@ -73,6 +87,12 @@ class Match:
         if self.line[last:]:
             win.write(self.line[last:], color=None, pos=(x, y))
 
+    def _match_is_none(self):
+        return self.match is None
+
+    def _match_is_not_none(self):
+        return self.match is not None
+
 
 class Regex:
 
@@ -91,6 +111,24 @@ class Regex:
     def match(self, line):
         match = self.regex.match(line)
         self.output.append(Match(line, match, self.group_names))
+
+    def first(self, after=None, before=None, match=True):
+        if after is not None:
+            slc = slice(after + 1, None, 1)
+            calc_result = _after_i_func(after)
+        elif before is not None:
+            slc = slice(before - 1, None, -1)
+            calc_result = _before_i_func(before)
+        else:
+            raise PireError('requires `before` or `after` keywords')
+        if match:
+            check = Match._match_is_not_none
+        else:
+            check = Match._match_is_none
+        for i, match in enumerate(self.output[slc]):
+            if check(match):
+                return calc_result(i)
+        return None
 
 
 def load_regexes(path):

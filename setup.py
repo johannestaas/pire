@@ -20,7 +20,7 @@ setup(
     url="https://github.com/johannestaas/pire",
     packages=['pire'],
     package_dir={'pire': 'pire'},
-    long_description=read('README.md'),
+    long_description=read('README.rst'),
     classifiers=[
         # 'Development Status :: 1 - Planning',
         # 'Development Status :: 2 - Pre-Alpha',

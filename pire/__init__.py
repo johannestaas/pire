@@ -14,6 +14,7 @@ from .ui import run_pire
 
 
 def main():
+    import os
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -24,6 +25,9 @@ def main():
         'input_paths', nargs='+', help='paths to files to parse with regex',
     )
     args = parser.parse_args()
+    if not os.path.exists(args.regex):
+        with open(args.regex, 'w') as f:
+            f.write('')
     run_pire(
         regex_path=args.regex,
         input_paths=args.input_paths,

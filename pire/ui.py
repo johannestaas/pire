@@ -17,7 +17,9 @@ def gen_lines(input_paths):
             yield from f
 
 
-def display(regexes, sel_regex, scr, regex_win, out_win, start=0):
+def display(
+    regexes, sel_regex, scr, regex_win, out_win, start=0, lines=None,
+):
     """
     Displays the input matched against the regexes in two windows.
     """
@@ -34,6 +36,13 @@ def display(regexes, sel_regex, scr, regex_win, out_win, start=0):
         for i, out in enumerate(output):
             pos = (0, i + 1)
             out.draw(out_win, pos)
+    else:
+        for i, line in enumerate(lines):
+            if i < start:
+                continue
+            if i >= start + h - 1:
+                break
+            out_win.write(line, pos=(0, i - start + 1), color='yellow')
     out_win.write(
         (
             '?:help q:quit  e:edit  w:regex_up  s:regex_down  r:out_up  '
@@ -69,17 +78,22 @@ def run_pire(
             line_gen = gen_lines(input_paths)
             if sel_regex is not None:
                 run_regex(sel_regex, line_gen)
+                output = sel_regex.output
+            else:
+                output = list(line_gen)
             scr.clear()
             scr.refresh()
             display(
                 regexes, sel_regex, scr, regex_win, out_win,
-                start=output_start,
+                start=output_start, lines=output,
             )
             key = scr.getkey()
             if key == 'q':
                 break
             elif key == 'e':
                 edit_regex(regex_path)
+            elif key == '?':
+                draw_help(scr)
             elif key == 's':
                 sel_index += 1
                 sel_index %= len(regexes)
@@ -89,33 +103,31 @@ def run_pire(
             elif key == 'r':
                 output_start = max(output_start - 1, 0)
             elif key == 'f':
-                output_start = min(output_start + 1, len(sel_regex.output))
+                output_start = min(output_start + 1, len(output))
             elif key == '[':
                 output_start = max(output_start - 10, 0)
             elif key == ']':
-                output_start = min(output_start + 10, len(sel_regex.output))
+                output_start = min(output_start + 10, len(output))
             elif key == 'g':
                 output_start = 0
             elif key == 'G':
-                output_start = len(sel_regex.output) - 1
-            elif key == 'n':
+                output_start = len(output) - 1
+            elif sel_regex and key == 'n':
                 first = sel_regex.first(after=output_start, match=True)
                 if first is not None:
                     output_start = first
-            elif key == 'N':
+            elif sel_regex and key == 'N':
                 first = sel_regex.first(before=output_start, match=True)
                 if first is not None:
                     output_start = first
-            elif key == 'm':
+            elif sel_regex and key == 'm':
                 first = sel_regex.first(after=output_start, match=False)
                 if first is not None:
                     output_start = first
-            elif key == 'M':
+            elif sel_regex and key == 'M':
                 first = sel_regex.first(before=output_start, match=False)
                 if first is not None:
                     output_start = first
-            elif key == '?':
-                draw_help(scr)
 
 
 def draw_help(scr):

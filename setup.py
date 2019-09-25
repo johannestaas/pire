@@ -11,7 +11,7 @@ def read(fname):
 
 setup(
     name="pire",
-    version="0.1.0",
+    version="0.1.1",
     description="Python Interactive Regular Expression",
     author="Johan Nestaas",
     author_email="johannestaas@gmail.com",

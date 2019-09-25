@@ -42,6 +42,8 @@ Or::
 Releases
 --------
 
+:0.1.1:
+    - fixed bug with missing regex.pire file and output display
 :0.1.0:
     - curses interface implemented
 :0.0.1:

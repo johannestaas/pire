@@ -3,7 +3,7 @@ from collections import namedtuple
 
 
 def _color_gen():
-    colors = ('green', 'blue', 'magenta', 'cyan', 'white', 'red')
+    colors = ('green', 'blue', 'magenta', 'cyan', 'red')
     color_i = 0
     while True:
         yield colors[color_i]
@@ -46,12 +46,11 @@ class Match:
         inserts = []
         color_gen = _color_gen()
         for i, name in enumerate(names):
+            if not self.match.group(name):
+                continue
             color = next(color_gen)
             start, end = self.match.span(name)
-            if isinstance(name, str):
-                text = f'(?P<{name}>'
-            else:
-                text = f'([{name}]'
+            text = f'({name}:'
             inserts.append((start, i, _Insert(text, color)))
             inserts.append((end, -i, _Insert(')', color)))
         # This sorts it so it's naturally sorted by the order they should be

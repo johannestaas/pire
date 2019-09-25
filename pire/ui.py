@@ -1,6 +1,14 @@
+from subprocess import call
+
 from ezcurses import Cursed
 
 from .regex_engine import load_regexes, run_regex
+from .local_os import get_editor
+
+
+def edit_regex(path):
+    editor = get_editor()
+    call([editor, path])
 
 
 def gen_lines(input_paths):
@@ -48,5 +56,8 @@ def run_pire(
             scr.clear()
             scr.refresh()
             display(regexes, sel_regex, scr, regex_win, out_win)
-            if scr.getkey() == 'q':
+            key = scr.getkey()
+            if key == 'q':
                 break
+            elif key == 'e':
+                edit_regex(regex_path)

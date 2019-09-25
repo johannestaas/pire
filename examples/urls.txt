@@ -1,0 +1,3 @@
+http://foo.example.org
+https://bar.example.org/a/path
+http://some-subdomain.example.org/path/1/2/3?q=foo

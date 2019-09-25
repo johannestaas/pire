@@ -1,5 +1,5 @@
-(\w\w\w) (\d\d\d) (\w\w\w)
 (?P<first_word>\w+) (?P<digits>\d+) (?P<second_word>\w+)
-(?P<proto>https?)://(?P<sub>(?:[-a-zA-Z0-9]+\.)*)(?P<dom>[-a-zA-Z0-9]+\.[a-zA-Z0-9]{2,})(?P<path>/[^?]*)?(?P<query>\?.*)?
+(\w\w\w) (\d\d\d) (\w\w\w)
 (?P<first_word>\w+ (?P<digits>\d+)) (?P<second_word>\w*)
+(?P<proto>https?)://(?P<sub>(?:[-a-zA-Z0-9]+\.)*)(?P<dom>[-a-zA-Z0-9]+\.[a-zA-Z0-9]{2,})(?P<path>/[^?]*)?(?P<query>\?.*)?
 \w\w\w \d\d\d \w\w\w

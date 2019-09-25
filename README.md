@@ -10,7 +10,7 @@ From the project root directory::
 
     $ python setup.py install
 
-Or through PyPI:
+Or through PyPI::
 
     $ pip install pire
 
@@ -42,6 +42,7 @@ Or::
 Releases
 --------
 
-| Version | Notes           |
-| ------- | --------------- |
-|  0.0.1  | Project created |
+:0.1.0:
+    - curses interface implemented
+:0.0.1:
+    - Project created

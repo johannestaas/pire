@@ -114,3 +114,30 @@ def run_pire(
                 first = sel_regex.first(before=output_start, match=False)
                 if first is not None:
                     output_start = first
+            elif key == '?':
+                draw_help(scr)
+
+
+def draw_help(scr):
+    w, h = scr.max_size()
+    scr.clear()
+    for i, txt in enumerate([
+        '?: display this help',
+        'q: quit',
+        'e: open editor ($EDITOR environment variable)',
+        's: select next regex',
+        'w: select previous regex',
+        'r: go up one line in output',
+        'f: go down one line in output',
+        '[: go up 10 lines',
+        ']: go down 10 lines',
+        'g: go to top of output',
+        'G: go to bottom of output',
+        'n: find next regex match after cursor',
+        'N: find next regex match before cursor',
+        'm: find next regex mismatch after cursor',
+        'M: find next regex mismatch before cursor',
+    ]):
+        scr.write(txt, pos=(0, i), color=('white', 'blue'))
+    scr.refresh()
+    scr.getkey()

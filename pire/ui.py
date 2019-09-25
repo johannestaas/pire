@@ -32,6 +32,11 @@ def display(regexes, sel_regex, scr, regex_win, out_win):
     for i, out in enumerate(sel_regex.output):
         pos = (0, i + 1)
         out.draw(out_win, pos)
+    out_win.write(
+        'q:quit  e:edit  w:up  s:down',
+        pos=(0, h - 1),
+        color=('white', 'blue'),
+    )
     out_win.refresh()
 
 
@@ -41,9 +46,10 @@ def run_pire(
     split_horiz=True,
 ):
     with Cursed() as scr:
+        sel_index = 0
         while True:
             regexes = load_regexes(regex_path)
-            sel_regex = regexes[2]
+            sel_regex = regexes[sel_index]
             layout = scr.new_layout()
             layout.add_row(2, [12])
             layout.add_row(10, [12])
@@ -61,3 +67,9 @@ def run_pire(
                 break
             elif key == 'e':
                 edit_regex(regex_path)
+            elif key == 's':
+                sel_index += 1
+                sel_index %= len(regexes)
+            elif key == 'w':
+                sel_index -= 1
+                sel_index %= len(regexes)

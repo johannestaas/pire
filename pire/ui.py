@@ -150,6 +150,9 @@ def draw_help(scr):
         'm: find next regex mismatch after cursor',
         'M: find next regex mismatch before cursor',
     ]):
+        txt += ' ' * (w - len(txt))
         scr.write(txt, pos=(0, i), color=('white', 'blue'))
+    for y in range(i + 1, h):
+        scr.write(' ' * w, pos=(0, y), color=('white', 'blue'))
     scr.refresh()
     scr.getkey()

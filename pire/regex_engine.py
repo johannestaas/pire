@@ -112,6 +112,15 @@ class Regex:
         match = self.regex.match(line)
         self.output.append(Match(line, match, self.group_names))
 
+    def stats(self):
+        metrics = {'matches': 0, 'mismatches': 0}
+        for out in self.output:
+            if out.match is not None:
+                metrics['matches'] += 1
+            else:
+                metrics['mismatches'] += 1
+        return metrics
+
     def first(self, after=None, before=None, match=True):
         if after is not None:
             slc = slice(after + 1, None, 1)

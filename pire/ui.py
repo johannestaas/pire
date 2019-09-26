@@ -43,10 +43,12 @@ def display(
             if i >= start + h - 1:
                 break
             out_win.write(line, pos=(0, i - start + 1), color='yellow')
+
+    total = f'MATCHES:{sel_regex.stats()["matches"]}/{len(sel_regex.output)}'
     out_win.write(
         (
-            '?:help q:quit  e:edit  w:regex_up  s:regex_down  r:out_up  '
-            'f:out_down  [:page_up  ]:page_down'
+            f'{total}  ?:help  q:quit  e:edit  w:regex_up  s:regex_down  '
+            'r:out_up  f:out_down  [:page_up  ]:page_down'
         ),
         pos=(0, h - 1),
         color=('white', 'blue'),

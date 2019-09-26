@@ -142,7 +142,7 @@ def load_regexes(path):
     ]
 
 
-def run_regex(regex, line_gen):
-    for line in line_gen:
+def run_regex(regex, lines):
+    for line in lines:
         line = line.rstrip('\n')
         regex.match(line)

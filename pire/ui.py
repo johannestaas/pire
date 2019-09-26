@@ -59,28 +59,27 @@ def run_pire(
     input_paths=None,
     split_horiz=True,
 ):
+    line_gen = gen_lines(input_paths)
+    lines = list(line_gen)
+    old_w, old_h = None, None
     with Cursed() as scr:
         sel_index = 0
         output_start = 0
         while True:
+            w, h = scr.max_size()
+            if old_w != w or old_h != h:
+                regex_win, out_win = init_layout(scr)
+                old_w, old_h = scr.max_size()
             regexes = load_regexes(regex_path)
             if not regexes:
                 sel_regex = None
             else:
                 sel_regex = regexes[sel_index]
-            layout = scr.new_layout()
-            layout.add_row(2, [12])
-            layout.add_row(10, [12])
-            layout.draw()
-            rows = list(layout)
-            regex_win = rows[0][0]
-            out_win = rows[1][0]
-            line_gen = gen_lines(input_paths)
             if sel_regex is not None:
-                run_regex(sel_regex, line_gen)
+                run_regex(sel_regex, lines)
                 output = sel_regex.output
             else:
-                output = list(line_gen)
+                output = lines
             scr.clear()
             scr.refresh()
             display(
@@ -156,3 +155,14 @@ def draw_help(scr):
         scr.write(' ' * w, pos=(0, y), color=('white', 'blue'))
     scr.refresh()
     scr.getkey()
+
+
+def init_layout(scr):
+    layout = scr.new_layout()
+    layout.add_row(2, [12])
+    layout.add_row(10, [12])
+    layout.draw()
+    rows = list(layout)
+    regex_win = rows[0][0]
+    out_win = rows[1][0]
+    return regex_win, out_win

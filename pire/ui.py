@@ -47,7 +47,10 @@ def display(
                 line[start_x:], pos=(0, i - start_y + 1), color='yellow',
             )
 
-    total = f'MATCHES:{sel_regex.stats()["matches"]}/{len(sel_regex.output)}'
+    if sel_regex:
+        total = f'MATCH:{sel_regex.stats()["matches"]}/{len(sel_regex.output)}'
+    else:
+        total = f'MATCH:0/{len(lines)}'
     out_win.write(
         (
             f'{total}  ?:help  q:quit  e:edit  w:regex_up  s:regex_down  '

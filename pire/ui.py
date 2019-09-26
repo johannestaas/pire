@@ -18,7 +18,8 @@ def gen_lines(input_paths):
 
 
 def display(
-    regexes, sel_regex, scr, regex_win, out_win, start=0, lines=None,
+    regexes, sel_regex, scr, regex_win, out_win, start_y=0, start_x=0,
+    lines=None,
 ):
     """
     Displays the input matched against the regexes in two windows.
@@ -32,17 +33,19 @@ def display(
     out_w, h = out_win.max_size()
     out_win.write('=' * out_w, pos=(0, 0), color='blue')
     if sel_regex is not None:
-        output = sel_regex.output[start:start + h]
+        output = sel_regex.output[start_y:start_y + h]
         for i, out in enumerate(output):
             pos = (0, i + 1)
-            out.draw(out_win, pos)
+            out.draw(out_win, pos, start_x=start_x)
     else:
         for i, line in enumerate(lines):
-            if i < start:
+            if i < start_y:
                 continue
-            if i >= start + h - 1:
+            if i >= start_y + h - 1:
                 break
-            out_win.write(line, pos=(0, i - start + 1), color='yellow')
+            out_win.write(
+                line[start_x:], pos=(0, i - start_y + 1), color='yellow',
+            )
 
     total = f'MATCHES:{sel_regex.stats()["matches"]}/{len(sel_regex.output)}'
     out_win.write(
@@ -66,7 +69,8 @@ def run_pire(
     old_w, old_h = None, None
     with Cursed() as scr:
         sel_index = 0
-        output_start = 0
+        start_y = 0
+        start_x = 0
         while True:
             w, h = scr.max_size()
             if old_w != w or old_h != h:
@@ -86,7 +90,7 @@ def run_pire(
             scr.refresh()
             display(
                 regexes, sel_regex, scr, regex_win, out_win,
-                start=output_start, lines=output,
+                start_y=start_y, start_x=start_x, lines=output,
             )
             key = scr.getkey()
             if key == 'q':
@@ -102,33 +106,42 @@ def run_pire(
                 sel_index -= 1
                 sel_index %= len(regexes)
             elif key == 'r':
-                output_start = max(output_start - 1, 0)
+                start_y = max(start_y - 1, 0)
             elif key == 'f':
-                output_start = min(output_start + 1, len(output))
+                start_y = min(start_y + 1, len(output))
             elif key == '[':
-                output_start = max(output_start - 10, 0)
+                start_y = max(start_y - 10, 0)
             elif key == ']':
-                output_start = min(output_start + 10, len(output))
+                start_y = min(start_y + 10, len(output))
             elif key == 'g':
-                output_start = 0
+                start_y = 0
             elif key == 'G':
-                output_start = len(output) - 1
+                start_y = len(output) - 1
+            elif key == ',':
+                start_x = max(start_x - 1, 0)
+            elif key == '<':
+                start_x = 0
+            elif key == '.':
+                # No max, meh.
+                start_x += 1
+            elif key == '>':
+                start_x += 10
             elif sel_regex and key == 'n':
-                first = sel_regex.first(after=output_start, match=True)
+                first = sel_regex.first(after=start_y, match=True)
                 if first is not None:
-                    output_start = first
+                    start_y = first
             elif sel_regex and key == 'N':
-                first = sel_regex.first(before=output_start, match=True)
+                first = sel_regex.first(before=start_y, match=True)
                 if first is not None:
-                    output_start = first
+                    start_y = first
             elif sel_regex and key == 'm':
-                first = sel_regex.first(after=output_start, match=False)
+                first = sel_regex.first(after=start_y, match=False)
                 if first is not None:
-                    output_start = first
+                    start_y = first
             elif sel_regex and key == 'M':
-                first = sel_regex.first(before=output_start, match=False)
+                first = sel_regex.first(before=start_y, match=False)
                 if first is not None:
-                    output_start = first
+                    start_y = first
 
 
 def draw_help(scr):
@@ -146,6 +159,10 @@ def draw_help(scr):
         ']: go down 10 lines',
         'g: go to top of output',
         'G: go to bottom of output',
+        ',: scroll output text left',
+        '.: scroll output text right',
+        '<: scroll output text to far left',
+        '>: scroll output text right 10',
         'n: find next regex match after cursor',
         'N: find next regex match before cursor',
         'm: find next regex mismatch after cursor',

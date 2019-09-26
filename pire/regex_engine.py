@@ -36,21 +36,21 @@ class Match:
         self.match = match
         self.names = names
 
-    def draw(self, win, pos):
+    def draw(self, win, pos, start_x=0):
         # Return yellow if not a match.
         if self.match is None:
-            win.write(self.line, color='yellow', pos=pos)
+            win.write(self.line[start_x:], color='yellow', pos=pos)
             return
 
         # Return default color if no groups defined.
         if not self.match.groups():
-            win.write(self.line, color=None, pos=pos)
+            win.write(self.line[start_x:], color=None, pos=pos)
             return
 
         # Now we have to show the groups.
-        self._draw_groups(win, pos)
+        self._draw_groups(win, pos, start_x=start_x)
 
-    def _draw_groups(self, win, pos):
+    def _draw_groups(self, win, pos, start_x=0):
         # Sort by the match span, by start and longest ones.
         def _inverse_span_sort(name):
             span_start, span_end = self.match.span(name)
@@ -76,8 +76,10 @@ class Match:
         ]
 
         x, y = pos
-        last = 0
+        last = start_x
         for ipos, insert in inserts:
+            if ipos < last:
+                continue
             if ipos > last:
                 win.write(self.line[last:ipos], color=None, pos=(x, y))
                 x += ipos - last
